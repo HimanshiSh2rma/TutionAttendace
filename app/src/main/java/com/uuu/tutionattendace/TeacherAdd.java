@@ -1,46 +1,118 @@
 package com.uuu.tutionattendace;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Patterns;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.material.textfield.TextInputLayout;
 
+import java.util.ArrayList;
+
 public class TeacherAdd extends AppCompatActivity {
 
-    Button register;
-    TextInputLayout fullname,email,contactno,address,batcheslist,password,confirmpassword;
-    String name,mail,contact,add,batches,pass,confirmpass;
+    Button Tregister, Tbatcheslist;
+    TextInputLayout Tfullname, Temail, Tcontactno,Taddress, Tpassword, Tconfirmpassword;
+    String Tname, Tmail, Tcontact, Tadd, Tbatches, Tpass,Tconfirmpass;
+    String[] Blist;//Batches list
+    boolean[] checkedBatches;
+    ArrayList<Integer> b =new ArrayList<>();
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_teacher_add);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
-        fullname=findViewById(R.id.fullname);
-        email=findViewById(R.id.email);
-        contactno=findViewById(R.id.contact);
-        address=findViewById(R.id.address);
-        batcheslist=findViewById(R.id.batches);
-        password=findViewById(R.id.password);
-        confirmpassword=findViewById(R.id.confirmword);
-        register=findViewById(R.id.register);
 
-        register.setOnClickListener(new View.OnClickListener() {
+        Tfullname=findViewById(R.id.Tfullname);
+        Temail =findViewById(R.id.Temail);
+        Tcontactno =findViewById(R.id.Tcontact);
+        Taddress=findViewById(R.id.Taddress);
+        Tbatcheslist =findViewById(R.id.Tbatches);
+        Tpassword =findViewById(R.id.Tpassword);
+        Tconfirmpassword =findViewById(R.id.Tconfirmword);
+        Tregister =findViewById(R.id.Tregister);
+
+        Blist = getResources().getStringArray(R.array.batchesList);
+        checkedBatches = new boolean[Blist.length];
+
+        Tbatcheslist.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                name=fullname.getEditText().getText().toString();
-                mail=email.getEditText().getText().toString();
-                contact=contactno.getEditText().getText().toString();
-                add=address.getEditText().getText().toString();
-                batches=batcheslist.getEditText().getText().toString();
-                pass=password.getEditText().getText().toString();
-                confirmpass=confirmpassword.getEditText().getText().toString();
+                AlertDialog.Builder Bbuilder= new AlertDialog.Builder(getApplicationContext());
+                Bbuilder.setTitle("Batches");
+                Bbuilder.setMultiChoiceItems(Blist, checkedBatches, new DialogInterface.OnMultiChoiceClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int position, boolean isChecked) {
+                        if(isChecked){
+                           if(!b.contains(position)) {
+                               b.add(position);
+                           }}
+//                           else{
+//                               b.remove(position);
+//                           }
+
+                           else if(b.contains(position)){
+                                b.remove(position);
+                            }
+
+                        }
+
+
+                });
+
+                Bbuilder.setCancelable(false);
+                Bbuilder.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String batch="";
+                        for(int i=0;i<b.size();i++){
+                            batch=batch+Blist[b.get(i)];
+                        }
+                    }
+                });
+
+                Bbuilder.setNegativeButton("Dismiss", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+
+                Bbuilder.setNeutralButton("Clear all", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        for(int i=0;i<checkedBatches.length;i++){
+                            checkedBatches[i]=false;
+                            b.clear();
+                        }
+                    }
+                });
+
+                AlertDialog bDialog= Bbuilder.create();
+                bDialog.show();
+
+            }
+        });
+
+        Tregister.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Tname =Tfullname.getEditText().getText().toString();
+                Tmail = Temail.getEditText().getText().toString();
+                Tcontact = Tcontactno.getEditText().getText().toString();
+                Tadd =Taddress.getEditText().getText().toString();
+                Tpass = Tpassword.getEditText().getText().toString();
+                Tconfirmpass= Tconfirmpassword.getEditText().getText().toString();
 
                 checkDataEntered();
 
@@ -52,53 +124,51 @@ public class TeacherAdd extends AppCompatActivity {
 
     public void checkDataEntered(){
 
-        if(fullname.getEditText().getText().toString().trim().length()>1){
-            fullname.setError(null);
+        if(Tfullname.getEditText().getText().toString().trim().length()>1){
+            Tfullname.setError(null);
         }
 
-        if(isEmail(email)){
-            email.setError(null);
+        if(isEmail(Temail)){
+            Temail.setError(null);
         }
 
-        if(address.getEditText().getText().toString().trim().length()>1){
-            address.setError(null);
+        if(Taddress.getEditText().getText().toString().trim().length()>1){
+            Taddress.setError(null);
         }
 
-        if(isValidPhoneNumber(contactno)){
-            contactno.setError(null);
+        if(isValidPhoneNumber(Tcontactno)){
+            Tcontactno.setError(null);
         }
 
-        if(password.getEditText().getText().toString().trim().length()>1){
-            password.setError(null);
+        if(Tpassword.getEditText().getText().toString().trim().length()>1){
+            Tpassword.setError(null);
         }
 
-        if(confirmpassword.getEditText().getText().toString().trim().length()>1){
-            confirmpassword.setError(null);
-        }
-
-        if(batcheslist.getEditText().getText().toString().trim().length()>1){
-            batcheslist.setError(null);
-        }
-
-        if(address.getEditText().getText().toString().trim().length()>1){
-            address.setError(null);
-        }
-
-        if(isEmpty(fullname)){
-            fullname.setError("fullname is required");
-        }
-
-        if(isEmpty(password)){
-            password.setError("Password is required");
-        }
-
-        if(!isEmail(email)){
-            email.setError("Enter valid Email");
+        if(Tconfirmpassword.getEditText().getText().toString().trim().length()>1){
+            Tconfirmpassword.setError(null);
         }
 
 
 
-        if(isEmpty(fullname)&&isEmpty(email)&&isEmpty(confirmpassword)&&isEmpty(contactno)&&isEmpty(password)&&isEmpty(batcheslist)&&isEmpty(address)) {
+        if(Taddress.getEditText().getText().toString().trim().length()>1){
+            Taddress.setError(null);
+        }
+
+        if(isEmpty(Tfullname)){
+            Tfullname.setError("fullname is required");
+        }
+
+        if(isEmpty(Tpassword)){
+            Tpassword.setError("Password is required");
+        }
+
+        if(!isEmail(Temail)){
+            Temail.setError("Enter valid Email");
+        }
+
+
+
+        if(isEmpty(Tfullname)&&isEmpty(Temail)&&isEmpty(Tconfirmpassword)&&isEmpty(Tcontactno)&&isEmpty(Tpassword)&&isEmpty(Taddress)) {
             Toast.makeText(getApplicationContext(), "Please fill all Information", Toast.LENGTH_SHORT).show();
         }
         else{

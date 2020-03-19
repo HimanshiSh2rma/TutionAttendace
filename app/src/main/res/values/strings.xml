@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">TutionAttendace</string>
+    <string-array name="batchesList">
+        <item>batch1</item>
+        <item>batch2</item>
+
+    </string-array>
 </resources>
